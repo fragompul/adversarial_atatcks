@@ -12,10 +12,12 @@
 
 Convolutional Neural Networks (CNNs) have achieved superhuman performance in image classification. However, they possess a critical and fascinating vulnerability: **Adversarial Examples**. By applying carefully crafted, imperceptible mathematical noise to an image using gradient descent, we can force a highly confident, yet completely incorrect prediction from the network.
 
+![Conceptual Pipeline of an Adversarial Attack](dashboard/assets/flow_diagram.png)
+
 **Origin & Evolution:**
 This project originated as my **Bachelor's Thesis (TFG)** for the Double Major in Mathematics and Computer Science. Driven by the mathematical depth of the topic, I continuously expanded the codebase to include advanced topological research (such as 3D loss landscapes and latent space attractors). Aspects of this ongoing research and related methodologies have been adapted for academic conferences.
 
-Whether you are a recruiter, a researcher, or an AI enthusiast, this repository provides both the raw mathematical implementations and a production-ready interactive dashboard to explore these vulnerabilities in real-time.
+Designed to bridge theoretical research and practical software engineering, this repository provides both the rigorous mathematical implementations of these attacks and a production-ready interactive dashboard to explore CNN vulnerabilities in real-time.
 
 ---
 
