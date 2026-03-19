@@ -14,6 +14,15 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 DASHBOARD_DIR = os.path.dirname(CURRENT_DIR)
 CSS_PATH = os.path.join(DASHBOARD_DIR, "assets", "style.css")
 
+# Function to load local CSS for custom styling
+def load_css(file_name):
+    if os.path.exists(file_name):
+        with open(file_name) as f:
+            st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
+# Call the function to apply styles
+load_css(CSS_PATH)
+
 # Define specific colors for each model
 MODEL_COLORS = {
     'MobileNetV2': '#ff7f0e', # Orange
