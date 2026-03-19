@@ -5,7 +5,7 @@
 [![Streamlit](https://img.shields.io/badge/Streamlit-App-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![Plotly](https://img.shields.io/badge/Plotly-Interactive-3F4F75?logo=plotly&logoColor=white)](https://plotly.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Live Demo](https://img.shields.io/badge/Live_Demo-Play_Now!-success?style=for-the-badge)](https://adversarial-attacks-vision.streamlit.app/)
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Play_Now!-success)](https://adversarial-attacks-vision.streamlit.app/)
 
 > **Unveiling the geometric and topological vulnerabilities of Convolutional Neural Networks through Adversarial Machine Learning.**
 
