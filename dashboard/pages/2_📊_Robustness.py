@@ -10,14 +10,9 @@ from utils.plotting import create_radar_chart, create_stealthiness_scatter
 # Page Configuration
 st.set_page_config(page_title="Robustness Analytics", page_icon="📊", layout="wide")
 
-# Function to load local CSS for custom styling
-def load_css(file_name):
-    if os.path.exists(file_name):
-        with open(file_name) as f:
-            st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
-
-# Call the function to apply styles
-load_css("assets/style.css")
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+DASHBOARD_DIR = os.path.dirname(CURRENT_DIR)
+CSS_PATH = os.path.join(DASHBOARD_DIR, "assets", "style.css")
 
 # Define specific colors for each model
 MODEL_COLORS = {
@@ -32,8 +27,8 @@ ATTACK_MARKERS = {'FGSM': 'circle', 'PGD': 'square', 'C&W': 'diamond', 'DeepFool
 @st.cache_data
 def load_data():
     """Loads aggregated and raw metrics from the data folder."""
-    data_path = os.path.join('data', 'robustness_metrics.csv')
-    raw_path = os.path.join('data', 'robustness_metrics_raw.csv')
+    data_path = os.path.join(DASHBOARD_DIR, 'data', 'robustness_metrics.csv')
+    raw_path = os.path.join(DASHBOARD_DIR, 'data', 'robustness_metrics_raw.csv')
     
     df_agg, df_raw = None, None
     if os.path.exists(data_path):
