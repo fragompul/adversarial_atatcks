@@ -20,6 +20,7 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 DASHBOARD_DIR = os.path.dirname(CURRENT_DIR)
 REPO_DIR = os.path.dirname(DASHBOARD_DIR)
 IMAGES_DIR = os.path.join(REPO_DIR, "images", "miniimagenet_random_100")
+CSS_PATH = os.path.join(DASHBOARD_DIR, "assets", "style.css")
 
 # Function to load local CSS for custom styling
 def load_css(file_name):
