@@ -16,7 +16,7 @@ Convolutional Neural Networks (CNNs) have achieved superhuman performance in ima
 ![Conceptual Pipeline of an Adversarial Attack](dashboard/assets/flow_diagram.png)
 
 **Origin & Evolution:**
-This project originated as my **Bachelor's Thesis (TFG)** for the Double Major in Mathematics and Computer Science. Driven by the mathematical depth of the topic, I continuously expanded the codebase to include advanced topological research (such as 3D loss landscapes and latent space attractors). Aspects of this ongoing research and related methodologies have been adapted for academic conferences.
+This project originated as my **Bachelor's Thesis (TFG)** for the Double Major in Mathematics and Computer Science at University of Seville. Driven by the mathematical depth of the topic, I continuously expanded the codebase to include advanced topological research. Aspects of this ongoing research and related methodologies have been adapted for academic conferences.
 
 Designed to bridge theoretical research and practical software engineering, this repository provides both the rigorous mathematical implementations of these attacks and a production-ready interactive dashboard to explore CNN vulnerabilities in real-time.
 
