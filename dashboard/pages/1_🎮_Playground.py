@@ -249,6 +249,11 @@ if uploaded_file is not None:
             noise_img = extract_noise(input_tensor, adv_tensor, config['clip_min'], multiplier=10)
             adv_display_img = deprocess_for_display(adv_tensor, config['clip_min'], config['clip_max'])
 
+            # Restore original sizes
+            orig_size = image_pil.size
+            noise_img = np.array(Image.fromarray(noise_img).resize(orig_size, Image.BILINEAR))
+            adv_display_img = np.array(Image.fromarray(adv_display_img).resize(orig_size, Image.BILINEAR))
+
             # Evaluate Attack Success and Stealthiness
             # Thresholds must vary by attack type and model preprocessing scale:
             # 1. FGSM applies uniform noise (visible). C&W optimizes noise into textures (invisible even at higher L2).
