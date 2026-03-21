@@ -54,6 +54,7 @@ def load_model_config(model_name):
             'clip_max': 1.0,
             'eps_scale': 1.0
         }
+    
     elif model_name == 'EfficientNetB0':
         model = EfficientNetB0(weights='imagenet')
         return {
@@ -65,6 +66,7 @@ def load_model_config(model_name):
             'clip_max': 255.0,
             'eps_scale': 127.5
         }
+    
     elif model_name == 'InceptionV3':
         model = InceptionV3(weights='imagenet')
         return {
@@ -76,6 +78,7 @@ def load_model_config(model_name):
             'clip_max': 1.0,
             'eps_scale': 1.0
         }
+    
     elif model_name == 'TrafficNet (GTSRB)':
         model_path = os.path.join(DASHBOARD_DIR, 'models', 'traffic_sign_model.h5')
         if not os.path.exists(model_path):
@@ -85,12 +88,13 @@ def load_model_config(model_name):
         model = tf.keras.models.load_model(model_path)
         return {
             'model': model,
-            'target_size': (128, 128),
+            'target_size': (224, 224),
             'preprocess_fn': preprocess_gtsrb,
             'decode_fn': decode_gtsrb,
             'clip_min': 0.0,
             'clip_max': 1.0,
             'eps_scale': 1.0
         }
+    
     else:
         raise ValueError("Unknown model name.")
