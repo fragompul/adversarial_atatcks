@@ -327,9 +327,7 @@ st.title("🛡️ Robustness Report Card")
 st.markdown("""
 Point this at any model already in this repo, or **upload your own**, and get an automated robustness
 score: a battery of attacks (white-box FGSM/PGD and black-box Square Attack, which never touches
-gradients) runs against a batch of images with no manual tuning. This mirrors the standalone
-`advml-report-card` CLI shipped in this repo's pip package (`src/advml_vision/`), with the same
-battery and the same scoring, as a live dashboard instead of a command line.
+gradients) runs against a batch of images with no manual tuning.
 """)
 
 # Sidebar - Model
