@@ -89,58 +89,16 @@ st.divider()
 st.markdown("""
 ### 🧭 Dashboard Navigation
 Use the sidebar on the left to explore the different sections of this research:
-* **⚔️ Live Attacks**: Upload your own images and generate live white-box (FGSM, PGD, C&W, DeepFool,
-  Targeted I-FGSM) or black-box (Square Attack, NES, Boundary Attack) attacks, and see the
-  frequency-domain signature of the perturbation in real time.
-* **🩹 Defenses**: Attack an image, then apply a defense (JPEG compression, feature squeezing,
-  certified randomized smoothing) and watch live whether it recovers the correct prediction.
-* **📊 Robustness Evaluation**: Interactive charts (Radar, Heatmaps, natural corruptions) comparing
-  model resilience.
+* **⚔️ Live Attacks**: Upload your own images and generate live white-box (FGSM, PGD, C&W, DeepFool, Targeted I-FGSM) or black-box (Square Attack, NES, Boundary Attack) attacks, and see the frequency-domain signature of the perturbation in real time.
+* **🩹 Defenses**: Attack an image, then apply a defense (JPEG compression, feature squeezing, certified randomized smoothing) and watch live whether it recovers the correct prediction.
+* **📊 Robustness Evaluation**: Interactive charts (Radar, Heatmaps, natural corruptions) comparing model resilience.
 * **🌌 Latent Space Exploration**: Discover how attacks shift the internal representations using PCA.
 * **🕳️ Attractors & Loss**: Visualize the 3D topology of the network's loss landscape.
-* **🛡️ Report Card**: Upload any Keras model, run the full attack battery against it, and get a
-  robustness score plus a downloadable HTML report, the same engine that powers the standalone
-  [advml-vision](https://pypi.org/project/advml-vision/) pip package and the
-  [Sentinel](https://github.com/fragompul/adversarial_attacks_vision/tree/main/enterprise_suite)
-  audit platform.
-* **🔬 Explainability**: Compute Grad-CAM before and after an attack, for the same class, and watch
-  the model's attention get hijacked live.
+* **🛡️ Report Card**: Upload any Keras model, run the full attack battery against it, and get a robustness score plus a downloadable HTML report.
+* **🔬 Explainability**: Compute Grad-CAM before and after an attack, for the same class, and watch the model's attention get hijacked live.
 """)
 
 st.divider()
-
-# What's new: the research this dashboard doesn't (yet) make interactive lives in the repo's
-# notebooks; this section is the map from "click a button" to "read the derivation".
-st.subheader("🆕 Beyond the Dashboard: Full Research Notebooks")
-st.markdown("""
-Everything below is implemented, derived from scratch, and executed at real scale in this repo's
-notebooks, some of it is exposed interactively above, the rest is one click away on GitHub.
-""")
-
-col_a, col_b, col_c = st.columns(3)
-with col_a:
-    st.markdown("""
-**Attacks**
-- Black-box: Square Attack, NES, Boundary Attack (`attacks/`)
-- Physical-world adversarial patch with EOT (`attacks/physical/01_AdversarialPatch.ipynb`)
-- Video action-recognition attacks (`video_attacks/`)
-""")
-with col_b:
-    st.markdown("""
-**Defenses**
-- Preprocessing (JPEG, feature squeezing) and Mahalanobis detection (`defenses/`)
-- Certified robustness via randomized smoothing
-- PGD-AT and TRADES adversarial training, before/after comparison
-""")
-with col_c:
-    st.markdown("""
-**Analysis**
-- Vision Transformer vs. CNN robustness (`robustness_evaluation/`)
-- Grad-CAM under attack, Fourier spectral analysis of perturbations
-- Robustness to natural corruptions (ImageNet-C style), sink-class/attractor analysis
-""")
-
-st.markdown("---")
 
 # Footer
 st.markdown("""
