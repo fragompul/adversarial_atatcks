@@ -110,3 +110,115 @@ def targeted_ifgsm_attack(img, target_label, epsilon, model, clip_min, clip_max,
         perturbation = tf.clip_by_value(adv_img - img, -epsilon, epsilon)
         adv_img = tf.clip_by_value(img + perturbation, clip_min, clip_max)
     return adv_img
+
+def _margin_loss(probs, true_idx):
+    probs = np.array(probs).flatten()
+    true_prob = probs[true_idx]
+    other_probs = probs.copy()
+    other_probs[true_idx] = -1.0
+    return float(true_prob - other_probs.max())
+
+def square_attack(img, true_idx, model, epsilon, clip_min, clip_max, query_budget=300, p_init=0.2):
+    """Square Attack (score-based black-box, no gradients). Returns (adv_img, queries_used)."""
+    _, h, w, c = img.shape
+    init_noise = np.random.choice([-epsilon, epsilon], size=(1, 1, w, c))
+    init_noise = np.tile(init_noise, (1, h, 1, 1))
+    adv_img = tf.clip_by_value(img + init_noise, clip_min, clip_max)
+
+    best_loss = _margin_loss(model(adv_img, training=False), true_idx)
+    queries_used = 1
+
+    for i in range(query_budget - 1):
+        if best_loss < 0:
+            break
+        p = p_init * max(1 - i / query_budget, 0.05)
+        side = max(int(round(np.sqrt(p * h * w))), 1)
+        row = np.random.randint(0, h - side + 1)
+        col = np.random.randint(0, w - side + 1)
+
+        candidate = adv_img.numpy().copy()
+        patch_val = np.random.choice([-epsilon, epsilon], size=(1, side, side, c))
+        candidate[:, row:row + side, col:col + side, :] = np.clip(
+            img.numpy()[:, row:row + side, col:col + side, :] + patch_val, clip_min, clip_max
+        )
+        candidate = tf.convert_to_tensor(candidate, dtype=tf.float32)
+
+        candidate_loss = _margin_loss(model(candidate, training=False), true_idx)
+        queries_used += 1
+        if candidate_loss < best_loss:
+            adv_img = candidate
+            best_loss = candidate_loss
+
+    return adv_img, queries_used
+
+def nes_estimate_gradient(input_image, true_idx, model, sigma, n_samples, clip_min, clip_max):
+    """Antithetic NES gradient estimate (Ilyas et al., 2018): every sample costs 2 queries."""
+    grad_estimate = tf.zeros_like(input_image)
+    n_pairs = n_samples // 2
+    for _ in range(n_pairs):
+        u = tf.random.normal(shape=input_image.shape)
+        img_plus = tf.clip_by_value(input_image + sigma * u, clip_min, clip_max)
+        img_minus = tf.clip_by_value(input_image - sigma * u, clip_min, clip_max)
+        probs_plus = model(img_plus, training=False).numpy().flatten()
+        probs_minus = model(img_minus, training=False).numpy().flatten()
+        loss_plus = -np.log(probs_plus[true_idx] + 1e-12)
+        loss_minus = -np.log(probs_minus[true_idx] + 1e-12)
+        grad_estimate += (loss_plus - loss_minus) * u
+    grad_estimate = grad_estimate / (2 * sigma * n_pairs)
+    return grad_estimate, 2 * n_pairs
+
+def nes_attack(img, true_idx, model, epsilon, clip_min, clip_max,
+               query_budget=200, alpha_fraction=0.2, sigma=0.001, population=10):
+    """NES (score-based black-box gradient estimation, Ilyas et al., 2018). Returns (adv_img, queries_used)."""
+    alpha = epsilon * alpha_fraction
+    adv_img = tf.identity(img)
+    queries_used = 0
+    while queries_used + population + 1 <= query_budget:
+        grad_estimate, q = nes_estimate_gradient(adv_img, true_idx, model, sigma, population, clip_min, clip_max)
+        queries_used += q
+        adv_img = adv_img + alpha * tf.sign(grad_estimate)
+        perturbation = tf.clip_by_value(adv_img - img, -epsilon, epsilon)
+        adv_img = tf.clip_by_value(img + perturbation, clip_min, clip_max)
+        current_probs = model(adv_img, training=False).numpy().flatten()
+        queries_used += 1
+        if np.argmax(current_probs) != true_idx:
+            break
+    return adv_img, queries_used
+
+def boundary_attack(img, true_idx, model, clip_min, clip_max,
+                     query_budget=500, spherical_step=0.01, source_step=0.01, max_init_tries=200):
+    """Decision-based black-box attack (Brendel et al., 2018): only ever sees the top-1 label,
+    never scores or gradients. Returns (adv_img, queries_used)."""
+    queries_used = 0
+    adv_img = None
+    for _ in range(max_init_tries):
+        candidate = tf.random.uniform(img.shape, minval=clip_min, maxval=clip_max)
+        pred_idx = int(tf.argmax(model(candidate, training=False)[0]).numpy())
+        queries_used += 1
+        if pred_idx != true_idx:
+            adv_img = candidate
+            break
+    if adv_img is None:
+        return img, queries_used
+
+    while queries_used < query_budget:
+        diff = img - adv_img
+        diff_norm = tf.norm(diff)
+        eta = tf.random.normal(img.shape)
+        eta = eta - (tf.reduce_sum(eta * diff) / (diff_norm ** 2 + 1e-12)) * diff
+        eta = eta / (tf.norm(eta) + 1e-12) * spherical_step * diff_norm
+
+        candidate = tf.clip_by_value(adv_img + eta, clip_min, clip_max)
+        pred_idx = int(tf.argmax(model(candidate, training=False)[0]).numpy())
+        queries_used += 1
+
+        if pred_idx != true_idx:
+            candidate2 = tf.clip_by_value(candidate + source_step * (img - candidate), clip_min, clip_max)
+            if queries_used < query_budget:
+                pred_idx2 = int(tf.argmax(model(candidate2, training=False)[0]).numpy())
+                queries_used += 1
+                adv_img = candidate2 if pred_idx2 != true_idx else candidate
+            else:
+                adv_img = candidate
+
+    return adv_img, queries_used
